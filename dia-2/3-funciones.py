@@ -64,3 +64,23 @@ usuarios(nombre='Eduardo', edad=30, sexo='Masculino', nacionalidad='peruano')
 
 
 usuarios(direccion='Las begonias 113', apellido ='Juarez', hobbies = ['Jugar DOTA', 'Montar Bici', 'Preparar tragos'])
+
+
+# tenemos la funcion llamada calcular promedio en el cual se puedan ingresar n numeros y se necesita retornar el promedio de esos numeros 
+# ejemplo: 10, 20, 50, 55, 70 > 41
+# 5, 7, 10
+# len(...)
+
+def calcular(*numeros):
+    cantidad = len(numeros)
+    # https://www.programiz.com/python-programming/methods/built-in/sum
+    total = sum(numeros)
+    # total = 0
+    # for numero in numeros:
+    #     # total += numero
+    #     total = total + numero
+    
+    resultado = total / cantidad
+    return resultado
+
+print(calcular(10, 20, 50, 55, 70))
