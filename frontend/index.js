@@ -13,6 +13,7 @@ tablaHeader.innerHTML = `
   <th>disponible</th>`;
 
 const agregarProducto = async (data) => {
+  console.log(data)
   const resultado = await fetch(`${BACK_URL}/productos`, {
     method: "POST",
     body: JSON.stringify(data),
@@ -35,10 +36,10 @@ const listarProductos = async () => {
     const tdNombre = document.createElement("td");
     const tdPrecio = document.createElement("td");
     const tdDisponible = document.createElement("td");
-    tdId.innerText = index;
+    tdId.innerText = info.id;
     tdNombre.innerText = info.nombre;
     tdPrecio.innerText = info.precio;
-    tdDisponible.innerText = info.disponible;
+    tdDisponible.innerText = info.disponible ? '✅' : '❌';
     fila.appendChild(tdId);
     fila.appendChild(tdNombre);
     fila.appendChild(tdPrecio);
@@ -51,9 +52,9 @@ const agregarBtnClick = async (e) => {
   e.preventDefault();
   const nombre = nombreInput.value;
   const precio = precioInput.value;
-  const disponible = disponibleInput.value;
+  const disponible = disponibleInput.checked;
 
-  await agregarProducto({ nombre, precio });
+  await agregarProducto({ nombre, precio, disponible });
 };
 
 agregar.addEventListener("click", agregarBtnClick);
