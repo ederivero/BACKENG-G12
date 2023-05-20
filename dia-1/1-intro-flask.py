@@ -2,7 +2,8 @@ from flask import Flask, request
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app, origins=['http://localhost:5500', 'http://127.0.0.1:5500'], methods=['GET', 'POST', 'PUT', 'DELETE'])
+CORS(app, origins=['http://localhost:5500', 'http://127.0.0.1:5500'],
+     methods=['GET', 'POST', 'PUT', 'DELETE'])
 
 productos = [{
     'id': 1,
@@ -21,7 +22,6 @@ productos = [{
     'nombre': 'Taladro',
     'precio': 120.0,
     'disponible': False
-
 }]
 
 
