@@ -1,0 +1,2 @@
+flask db init > inicializamos las migraciones en nuestro proyecto
+flask db migrate -m "nombre de la migracion" > crearemos una nueva migracion con los cambios en los modelos
