@@ -5,6 +5,7 @@ from base_de_datos import conexion
 from models.usuarios_model import UsuarioModel
 from models.mascotas_model import MascotaModel
 from controllers.usuario_controller import UsuariosController
+from controllers.mascota_controller import MascotasController
 
 app = Flask(__name__)
 # estaremos agregando la libreria flask_restful a nuestro proyecto de flask
@@ -20,7 +21,7 @@ Migrate(app, conexion)
 
 # definir las rutas utilizando la clase Api
 api.add_resource(UsuariosController, '/usuarios', '/otra_ruta_usuarios')
-
+api.add_resource(MascotasController, '/mascotas')
 
 if __name__ == '__main__':
     app.run(debug=True)
