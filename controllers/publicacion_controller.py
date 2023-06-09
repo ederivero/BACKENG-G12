@@ -106,7 +106,7 @@ class PublicacionController(Resource):
             # Para guardar los cambios de manera permanente
             conexion.session.commit()
             resultado = PublicacionResponseDto().dump(publicacion)
-            
+
             return {
                 'message': 'Publicacion actualizada exitosamente',
                 'content': resultado
@@ -114,5 +114,40 @@ class PublicacionController(Resource):
         except Exception as e:
             return {
                 'message': 'Error al actualizar la publicacion',
+                'content': e.args
+            }, 400
+
+    @jwt_required()
+    def delete(self, id):
+        try:
+            usuarioId = get_jwt_identity()
+            # Primera Forma (forma mas optima)
+            # Eliminar la publicacion usando el delete
+            # DELETE FROM publicaciones WHERE id = ... AND usuario_id = ...;
+            publicacionesEliminadas = conexion.session.query(
+                Publicacion).filter_by(id=id, usuarioId=usuarioId).delete()
+
+            if publicacionesEliminadas == 0:
+                raise Exception('No se encontro la publicacion a eliminar')
+
+            conexion.session.commit()
+
+            # Segunda Forma
+            # SELECT * FROM publicaciones WHERE id = ... AND usuario_id = ...;
+            publicacionEncontrada = conexion.session.query(
+                Publicacion).filter_by(id=id, usuarioId=usuarioId).first()
+
+            if not publicacionEncontrada:
+                raise Exception('No se encontro la publicacion a eliminar')
+
+            # DELETE FROM ....
+            conexion.session.delete(publicacionEncontrada)
+            conexion.session.commit()
+            return {
+                'message': 'Publicacion eliminada exitosamente'
+            }
+        except Exception as e:
+            return {
+                'message': 'Error al eliminar la publicacion',
                 'content': e.args
             }, 400
