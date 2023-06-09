@@ -5,7 +5,7 @@ from config import conexion
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
 from controllers.usuario_controller import RegistroController, LoginController, PerfilController
-from controllers.publicacion_controller import PublicacionesController
+from controllers.publicacion_controller import PublicacionesController, PublicacionController
 from datetime import timedelta
 from os import environ  # muestra las variables de entorno
 # las variables de entorno son variables que estan presentes de manera GLOBAL en toda la maquina / servidor y es aca donde se suelen guardar las credenciales (a la bd, informacion a otras API's, mensajeria (emails), entro otros), credenciales sensibles que no deben ser expuestas
@@ -38,6 +38,7 @@ api.add_resource(RegistroController, '/registro-usuario')
 api.add_resource(LoginController, '/login')
 api.add_resource(PerfilController, '/perfil')
 api.add_resource(PublicacionesController, '/publicaciones')
+api.add_resource(PublicacionController, '/publicacion/<int:id>')
 
 if __name__ == '__main__':
     app.run(debug=True)

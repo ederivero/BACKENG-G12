@@ -5,6 +5,7 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 from dtos.publicacion_dto import PublicacionRequestDto, PublicacionResponseDto
 from models.usuario_model import Usuario
 
+
 class PublicacionesController(Resource):
     @jwt_required()
     def post(self):
@@ -44,14 +45,74 @@ class PublicacionesController(Resource):
         # No se recomienda utilizar la siguiente forma ya que pertenece al "legacy" de SQLAlchemy por lo que pronto puede estar en desuso
         # https://flask-sqlalchemy.palletsprojects.com/en/3.0.x/legacy-query/
         # resultado = Publicacion.query.all()
-        usuarios = conexion.session.query(Usuario).filter_by(**queryParams).all()
-        print(usuarios)
-        
+
+        # Solamente necesito el ID
+        # with_entities > especificar que columnas queremos extraer
+        # SELECT * FROM ...
+        # con el uso de with_entities
+        # SELECT id, nombre FROM usuarios
+        data = conexion.session.query(Usuario).with_entities(
+            Usuario.id).filter_by(**queryParams).all()
+        # data > [(1,), (2,)]
+        print(data)
+        usuariosIds = []
+        for id in data:
+            usuariosIds.append(id[0])
+        # data = {'nombre': 'juan'}
+        # data.k
+
+        # SELECT * FROM publicaciones WHERE usuarioId = ...
+        # SELECT * FROM publicaciones WHERE usuario_id IN (1,2);
+        # https://www.postgresql.org/docs/current/functions-subquery.html#FUNCTIONS-SUBQUERY-IN
+
         resultado = conexion.session.query(
-            Publicacion).all()
+            Publicacion).filter(Publicacion.usuarioId.in_(usuariosIds)).all()
 
         dto = PublicacionResponseDto(many=True)
         publicaciones = dto.dump(resultado)
         return {
             'content': publicaciones
         }
+
+
+class PublicacionController(Resource):
+    # se encarga de 1. Validar que la token sea nuestra (concuerda el secreto),  2. De que la token aun no expiro, 3. Sea valida
+    @jwt_required()
+    # /publicacion/<int:id>
+    def put(self, id):
+        try:
+            usuarioId = get_jwt_identity()
+            # Buscar la publicacion segun el id y segun el usuarioId
+            # SELECT * FROM publicaciones WHERE id = ... AND usuario_id = ....
+            publicacion = conexion.session.query(Publicacion).filter_by(
+                id=id, usuarioId=usuarioId).first()
+            # publicacion = conexion.session.query(Publicacion).filter(Publicacion.id == id, Publicacion.usuarioId == usuarioId).first()
+            if not publicacion:
+                raise Exception('Publicacion no existe')
+
+            dto = PublicacionRequestDto()
+            dataValidada = dto.load(request.json)
+
+            # Primera forma
+            # publicacion.titulo = dataValidada.get('titulo')
+            # publicacion.descripcion = dataValidada.get('descripcion')
+            # publicacion.habilitado = dataValidada.get('habilitado')
+
+            # Segunda forma
+            # retornara la cantidad de registros actualizados
+            conexion.session.query(Publicacion).filter_by(
+                id=id, usuarioId=usuarioId).update(dataValidada)
+
+            # Para guardar los cambios de manera permanente
+            conexion.session.commit()
+            resultado = PublicacionResponseDto().dump(publicacion)
+            
+            return {
+                'message': 'Publicacion actualizada exitosamente',
+                'content': resultado
+            }, 201
+        except Exception as e:
+            return {
+                'message': 'Error al actualizar la publicacion',
+                'content': e.args
+            }, 400
