@@ -20,11 +20,39 @@ app.config['JWT_SECRET_KEY'] = environ.get('SECRET_KEY')
 # https://flask-jwt-extended.readthedocs.io/en/stable/options.html#jwt-access-token-expires
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1, minutes=30)
 # busca en la variable config la variable JWT_SECRET_KEY > sera el secreto por el cual se generaran las tokens
-JWTManager(app)
+jwt = JWTManager(app)
 
+
+@jwt.unauthorized_loader
+def tokenRequerida(razon):
+    # Ingresara aca si no se proveyo una tokenq a un endpoint que si necesita
+    print(razon)
+    return {
+        'message': 'Se necesita una token para realizar esta accion'
+    }, 401
+
+
+@jwt.invalid_token_loader
+def tokenInvalida(razon):
+    # ingresara aca si es que la token proveida no es correcta
+    print(razon)
+    message = ''
+    if razon == 'Not enough segments':
+        message = 'La token tiene que tener 3 segmentos, el header, payload y signature'
+
+    elif razon == "Invalid header string: 'utf-8' codec can't decode byte 0xc7 in position 0: invalid continuation byte":
+        message = 'Token invalida'
+
+    elif razon == 'Signature verification failed':
+        message = 'Esta token no pertenece a esta API'
+
+    return {
+        'message': message
+    }, 401
 
 # el metodo get de los diccionarios intentara buscar esa llave y si no existe, retornara None, a diferencia de las [] (llaves) que si no encuentra emitira un error de tipo KeyError
 # el metodo .get() solamente se puede utilizar para devolver o visualizar los valores, mas no para asignar mientras que las llaves [] son para lectura y escritura
+
 
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('DATABASE_URL')
 # app.config['SQLALCHEMY_DATABASE_URI'] = environ['DATABASE_URL']
