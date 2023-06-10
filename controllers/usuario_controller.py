@@ -1,5 +1,5 @@
 from flask_restful import Resource, request
-from models.usuario_model import Usuario
+from models.usuario_model import Usuario, TipoUsuario
 from config import conexion
 from dtos.usuario_dto import RegistroUsuarioRequestDto, LoginUsuarioRequestDto, UsuarioResponseDto
 from bcrypt import gensalt, hashpw, checkpw
@@ -7,10 +7,23 @@ from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identi
 
 
 class RegistroController(Resource):
+
+    @jwt_required()
     def post(self):
-        data = request.json
-        dto = RegistroUsuarioRequestDto()
+        # solamente los ADMINISTRADORES pueden registrar usuarios
+        usuarioId = get_jwt_identity()
+
         try:
+            tipoUsuarioMaestro = conexion.session.query(Usuario).with_entities(
+                Usuario.tipoUsuario).filter_by(id=usuarioId).first()
+            print(tipoUsuarioMaestro[0])
+
+            if tipoUsuarioMaestro[0] != TipoUsuario.ADMINISTRADOR:
+                raise Exception(
+                    'Solamente un administrador puede crear nuevos usuarios')
+
+            data = request.json
+            dto = RegistroUsuarioRequestDto()
             dataValidada = dto.load(data)
             password = bytes(dataValidada.get('password'), 'utf-8')
             # salt > es un texto creado aleatoreamente que se combinara con la password y con ello saldra el hash de la password
