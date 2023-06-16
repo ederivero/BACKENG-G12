@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.request import Request
 from django.http import HttpRequest
 from rest_framework.views import APIView
-from .serializers import CategoriaSerializer
+from .serializers import CategoriaSerializer, LibroSerializer
 from .models import Categoria
 from rest_framework import status
 
