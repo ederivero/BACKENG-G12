@@ -7,6 +7,7 @@ class Categoria(models.Model):
     nombre = models.TextField(null=False, unique=True)
     estante = models.TextField()
     piso = models.TextField()
+    habilitado = models.BooleanField(default=True)
 
     class Meta:
         # https://docs.djangoproject.com/en/4.2/ref/models/options/
