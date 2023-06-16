@@ -1,6 +1,6 @@
 # https://www.django-rest-framework.org/api-guide/serializers/
 from rest_framework import serializers
-from .models import Categoria
+from .models import Categoria, Libro
 
 class CategoriaSerializer(serializers.ModelSerializer):
     # https://www.django-rest-framework.org/api-guide/serializers/#modelserializer
@@ -10,3 +10,9 @@ class CategoriaSerializer(serializers.ModelSerializer):
         # fields = ['id', 'nombre']
         # exclude = ['nombre', 'piso'] # utilizar todos los campos excepto el nombre y el piso
         fields = '__all__' 
+    
+
+class LibroSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Libro
+        fields = '__all__'
