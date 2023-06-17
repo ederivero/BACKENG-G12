@@ -24,3 +24,15 @@ class AutorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Autor
         fields = '__all__'
+
+class LibroAutorSerializer(serializers.Serializer):
+    autorId = serializers.IntegerField(required=True)
+    libroId = serializers.IntegerField(required=True)
+
+
+class AutorConLibrosSerializer(serializers.ModelSerializer):
+    libros = LibroSerializer(many=True)
+    
+    class Meta:
+        model = Autor
+        fields = '__all__'

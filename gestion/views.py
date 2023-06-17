@@ -3,9 +3,10 @@ from rest_framework.response import Response
 from rest_framework.request import Request
 from django.http import HttpRequest
 from rest_framework.views import APIView
-from .serializers import CategoriaSerializer, LibroSerializer, AutorSerializer
+from .serializers import CategoriaSerializer, LibroSerializer, AutorSerializer, LibroAutorSerializer, AutorConLibrosSerializer
 from .models import Categoria, Libro, Autor
 from rest_framework import status
+from drf_yasg.utils import swagger_auto_schema
 
 # variable: Str > indicando el tipo de dato en caso que VScode u otro edito no sepa que tipo de dato puede ser
 @api_view(['GET', 'POST'])
@@ -199,3 +200,56 @@ class AutoresController(APIView):
         return Response(data={
             'content': serializador.data
         })
+
+class LibrosAutoresController(APIView):
+    # si no queremos que nos genere la documentacion de esta clase agregamos la siguiente configuracion
+    # swagger_schema = None
+
+    # swagger_auto_schema > podemos modificar la documentacion de nuestros endpoints dando mas detalle que el mismo swagger puede recopilar
+    # https://drf-yasg.readthedocs.io/en/stable/custom_spec.html#the-swagger-auto-schema-decorator
+    @swagger_auto_schema(operation_description='Enlaza el autor con el libro',request_body=LibroAutorSerializer)
+    def post(self, request: Request | HttpRequest):
+        serializador = LibroAutorSerializer(data = request.data)
+        try:
+            serializador.is_valid(raise_exception=True)
+            dataValidada = serializador.validated_data
+            autorId = dataValidada.get('autorId')
+            libroId = dataValidada.get('libroId')
+            # buscar en la tabla Autor si existe ese autor con ese ID y si no existe EMITIR un error diciendo que el autor no existe, lo mismo hacer con el Libro
+
+            autor = Autor.objects.filter(id = autorId).first()
+            libro = Libro.objects.filter(id = libroId).first()
+            if not autor:
+                raise Exception('Autor no existe')
+            if not libro:
+                raise Exception('Libro no existe')
+
+            # relaciona los libros con el autor
+            autor.libros.add(libro)
+            autor.save()
+
+            return Response(data = {
+                'message': 'Autor vinculado con el libro exitosamente'
+            }, status = status.HTTP_201_CREATED)
+        
+        except Exception as err:
+            return Response(data={
+                'message': 'Error al crear el libro con el autor',
+                'content': err.args
+            }, status = status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def mostrarInfoAutor(request:Request | HttpRequest, id: int):
+    autor = Autor.objects.filter(id = id).first()
+
+    if not autor:
+        return Response(data = {
+            'message': 'Autor no existe'
+        }, status=status.HTTP_400_BAD_REQUEST)
+    serializador = AutorConLibrosSerializer(instance=autor)
+    print(serializador.data)
+    # cuando yo uso el atributo libros se hace un inner join entre la tabla autores y la tabla autores_libros 
+    print(autor.libros.all())
+    return Response(data={
+        'content': serializador.data
+    })
