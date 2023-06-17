@@ -1,5 +1,14 @@
 from django.urls import path
-from .views import saludar, CategoriasController, CategoriaController, alternarEstadoCategoria
+from .views import (saludar, 
+                    CategoriasController, 
+                    CategoriaController, 
+                    alternarEstadoCategoria, 
+                    LibrosController,
+                    AutoresController)
+# me sirve para indicar un conjunto de rutas estaticas (mostrar generalmente archivos)
+from django.conf.urls.static import static
+# sirve para obtener los valores de las variables seteadas en el archivo settings.py
+from django.conf import settings
 
 urlpatterns = [
     path('', saludar),
@@ -8,4 +17,8 @@ urlpatterns = [
     path('categorias', CategoriasController.as_view()),
     path('categoria/<int:id>', CategoriaController.as_view()),
     path('toggle-categoria/<int:id>', alternarEstadoCategoria),
-]
+    path('libros', LibrosController.as_view()),
+    path('autores', AutoresController.as_view())
+
+] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
+# agrego todos los archivos en la carpeta 'imagenes' y con la ruta seteada en la variable MEDIA_URL

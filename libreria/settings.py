@@ -127,3 +127,12 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# https://docs.djangoproject.com/en/4.2/ref/settings/#media-root
+# MEDIA_ROOT > sirve para indicar donde se guardara los archivos subidos
+MEDIA_ROOT = BASE_DIR / 'imagenes'
+
+# https://docs.djangoproject.com/en/4.2/ref/settings/#media-url
+# MEDIA_URL > sirve para indicar el endpoint para devolver nuestros archivos subidos
+# es el endpoint en el cual se podra acceder al archivo
+MEDIA_URL = 'imagenes/'

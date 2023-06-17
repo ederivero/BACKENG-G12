@@ -3,8 +3,8 @@ from rest_framework.response import Response
 from rest_framework.request import Request
 from django.http import HttpRequest
 from rest_framework.views import APIView
-from .serializers import CategoriaSerializer, LibroSerializer
-from .models import Categoria
+from .serializers import CategoriaSerializer, LibroSerializer, AutorSerializer
+from .models import Categoria, Libro, Autor
 from rest_framework import status
 
 # variable: Str > indicando el tipo de dato en caso que VScode u otro edito no sepa que tipo de dato puede ser
@@ -139,7 +139,63 @@ def alternarEstadoCategoria(request, id):
 
 class LibrosController(APIView):
     def post(self, request: Request | HttpRequest):
+        serializador = LibroSerializer(data = request.data)
+        validado = serializador.is_valid()
+        if validado:
+            serializador.save()
+            return Response(data = {
+                'message': 'Libro creado exitosamente'
+            }, status= status.HTTP_201_CREATED)
         
+        else:
+            return Response(data = {
+                'message': 'Error al crear el libro',
+                'content': serializador.errors
+            }, status = status.HTTP_400_BAD_REQUEST)
+        
+    def get(self, request:Request | HttpRequest):
+        print(request.query_params)
+        # https://docs.djangoproject.com/en/4.2/topics/db/queries/#field-lookups
+        # contains > hace match con palabras sensibles a mayus y minus
+        # icontains > no respesta mayus ni minus
+        parametros = {}
+        if request.query_params.get('titulo'):
+            parametros['titulo__icontains']=request.query_params.get('titulo')
+
+        if request.query_params.get('anio'):
+            # hace busqueda del anio de esa fecha
+            parametros['fechaPublicacion__year']=request.query_params.get('anio')
+            
+
+        libros = Libro.objects.filter(**parametros).all()
+
+        resultado = LibroSerializer(instance=libros , many =True)
         return Response(data = {
-            'message': 'Libro creado exitosamente'
+            'content': resultado.data
+        })
+    
+class AutoresController(APIView):
+    def post(self, request: Request| HttpRequest):
+        serializador = AutorSerializer(data = request.data)
+
+        try:
+            serializador.is_valid(raise_exception=True)
+            serializador.save()
+
+            return Response(data={
+                'message': 'Autor creado exitosamente'
+            }, status=status.HTTP_201_CREATED)
+        
+        except Exception as err:
+            return Response(data = {
+                'message': 'Error al crear el autor',
+                'content': err.args
+            }, status= status.HTTP_400_BAD_REQUEST)
+        
+    def get(self, request):
+        autores = Autor.objects.all()
+        serializador = AutorSerializer(instance=autores, many=True)
+
+        return Response(data={
+            'content': serializador.data
         })
