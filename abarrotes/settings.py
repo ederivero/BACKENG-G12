@@ -112,7 +112,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es'
 
 TIME_ZONE = 'UTC'
 
@@ -133,3 +133,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Sirve para indicar a Django cual sera ahora el nuevo modelo del auth_user
 AUTH_USER_MODEL = 'gestion.Usuario'
+
+# Sirve para indicar donde queremos que se guarde los archivos subidos
+MEDIA_ROOT = BASE_DIR / 'imagenes'
+
+# Sirve para indicar cual sera el endpoint para acceder a los archivos subidos
+MEDIA_URL = 'imagenes/'

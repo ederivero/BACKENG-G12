@@ -2,14 +2,27 @@ from django.db import models
 # PermissionsMixin > modulo de permissions 
 # AbstractBaseUser > me sirve para modificar mi auth_user en su totalidad
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
-
+from django.utils.html import mark_safe
 
 class Imagen(models.Model):
     nombre = models.TextField()
     ubicacion = models.ImageField()
 
+    def __str__(self):
+        # sirve para indicar como se mostrar la instancia al moment de ser solicitada
+        return self.nombre
+    
+    def ubicacion_tag(self):
+        # return mark_safe('<img src="/imagenes/%s" width="150" height="150" />' % (self.ubicacion))
+        return mark_safe('<img src="/imagenes/{}" width="150" height="150" />'.format(self.ubicacion))
+    
+    # sirve para indicar el nombre de este 'atributo'
+    ubicacion_tag.short_description = 'Imagen de la ubicacion'
+
     class Meta:
         db_table = 'imagenes'
+        # sirve para indicar como sera el nombre pluralizado en el panel administrativo
+        verbose_name_plural = 'Imagenes'
 
 
 class Categoria(models.Model):
@@ -57,6 +70,7 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True, null=False)
     password = models.TextField(null=False)
     tipo = models.TextField(choices=[('ADMIN', 'ADMIN'), ('CAJERO', 'CAJERO')])
+    is_staff = models.BooleanField(default=False, db_column='is_staff')
 
     # sirve para indicarle que campo utilizara para encontrar al usuario por el panel administrativo
     USERNAME_FIELD = 'email'
