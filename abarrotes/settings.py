@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'gestion',
     'rest_framework',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -139,3 +140,28 @@ MEDIA_ROOT = BASE_DIR / 'imagenes'
 
 # Sirve para indicar cual sera el endpoint para acceder a los archivos subidos
 MEDIA_URL = 'imagenes/'
+
+# Sirve para configurar nuestro django rest framework
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        # sirve para indicar a DRF cual sera la clase se usara para las cosas relacionadas a la autenticacion
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
+
+from datetime import timedelta
+
+# Sirve para modificar la configuracion de rest framenwork simple JWT
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME':  timedelta(days=365) 
+}
+
+
+# Sirve para configuara la documentacion de nuestro Swagger
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS':{
+        'basic':{
+            'type': 'apiKey'
+        }
+    }
+}

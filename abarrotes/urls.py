@@ -15,10 +15,24 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+
+generadorSchema = get_schema_view(
+    openapi.Info(
+        title='Abarrotes API',
+        default_version='v1',
+        description='API de abarrotes con autenticacion',
+        contact=openapi.Contact(name='Eduardo de Rivero', email='ederiveroman@gmail.com')
+    )
+)
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    # path('admin/', admin.site.urls),
+    path('api/',include('gestion.urls')),
+    path('documentacion/',generadorSchema.with_ui()),
+
 ] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

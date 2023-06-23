@@ -5,19 +5,18 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseU
 from django.utils.html import mark_safe
 
 class Imagen(models.Model):
-    nombre = models.TextField()
-    ubicacion = models.ImageField()
+    nombre = models.ImageField()
 
     def __str__(self):
         # sirve para indicar como se mostrar la instancia al moment de ser solicitada
         return self.nombre
     
-    def ubicacion_tag(self):
+    def nombre_tag(self):
         # return mark_safe('<img src="/imagenes/%s" width="150" height="150" />' % (self.ubicacion))
-        return mark_safe('<img src="/imagenes/{}" width="150" height="150" />'.format(self.ubicacion))
+        return mark_safe('<img src="/imagenes/{}" width="150" height="150" />'.format(self.nombre))
     
     # sirve para indicar el nombre de este 'atributo'
-    ubicacion_tag.short_description = 'Imagen de la ubicacion'
+    nombre_tag.short_description = 'Figura de la imagen'
 
     class Meta:
         db_table = 'imagenes'
