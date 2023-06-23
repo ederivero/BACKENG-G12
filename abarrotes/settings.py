@@ -161,7 +161,11 @@ SIMPLE_JWT = {
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS':{
         'basic':{
-            'type': 'apiKey'
+            # https://github.com/OAI/OpenAPI-Specification/blob/main/versions/2.0.md#security-definitions-object
+            'type': 'apiKey',
+            'description': 'Bearer <YOUR_TOKEN>',
+            'name': 'Authorization', # el header por el cual se va a enviar esta token
+            'in': 'header', # donde se pasaria la token , por el query param o por los headers
         }
     }
 }
