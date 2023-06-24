@@ -11,6 +11,8 @@ from rest_framework.permissions import (AllowAny, # cualquiera puede utilizarlo
                                         )
 from .models import *
 from .serializers import *
+from rest_framework.parsers import MultiPartParser, FormParser
+from cloudinary import uploader
 
 
 class RegistroUsuarioController(APIView):
@@ -81,11 +83,11 @@ class CategoriasController(APIView):
         return Response(data={
             'content': serializador.data
         })
-from rest_framework.parsers import MultiPartParser, FormParser
 
 # Se recomienda usar este método cuando los FILES son ligeros (1MB máximo)
 class ProductosController(APIView):
     parser_classes = [MultiPartParser, FormParser]
+    permission_classes = [IsAuthenticatedOrReadOnly,]
 
     @swagger_auto_schema(request_body=ProductoSerializer, operation_summary='Crear producto')
     def post(self, request: Request | HttpRequest):
@@ -127,6 +129,8 @@ class ProductosController(APIView):
         }, status=status.HTTP_200_OK)
 
 class ProductosSegundoMetodoController(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly,]
+
     @swagger_auto_schema(request_body=ProductoSegundoMetodoSerializer, operation_summary='Registrar producto')
     def post(self, request: Request | HttpRequest):
         serializador = ProductoSegundoMetodoSerializer(data=request.data)
@@ -141,17 +145,20 @@ class ProductosSegundoMetodoController(APIView):
                 'message':'Error al crear el producto',
                 'content': err.args
             }, status=status.HTTP_400_BAD_REQUEST)
-        
+
+
 class UploadImageController(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly,]
     parser_classes = [MultiPartParser, FormParser]
-    
+
     @swagger_auto_schema(request_body=UploadImageSerializer, operation_summary='Subir imagen')
     def post(self, request: Request | HttpRequest):
         try:
-            image = request.FILES.get('imagen')
-            print(image)
+            imagen = request.FILES.get('imagen')
+            response = uploader.upload(imagen)
+            url = f"v{response['version']}/{response['public_id']}.{response['format']}"
             return Response(data={
-                'content': 'Url de la imagen'
+                'content': url
             }, status=status.HTTP_201_CREATED)
         except Exception as err:
             return Response(data={
