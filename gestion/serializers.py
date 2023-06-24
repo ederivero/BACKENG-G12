@@ -26,3 +26,7 @@ class ProductoSegundoMetodoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Producto
         fields = '__all__'
+
+
+class UploadImageSerializer(serializers.Serializer):
+    imagen = serializers.ImageField()

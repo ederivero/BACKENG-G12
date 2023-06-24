@@ -127,7 +127,7 @@ class ProductosController(APIView):
         }, status=status.HTTP_200_OK)
 
 class ProductosSegundoMetodoController(APIView):
-    @swagger_auto_schema(request_body=ProductoSegundoMetodoSerializer)
+    @swagger_auto_schema(request_body=ProductoSegundoMetodoSerializer, operation_summary='Registrar producto')
     def post(self, request: Request | HttpRequest):
         serializador = ProductoSegundoMetodoSerializer(data=request.data)
         try:
@@ -143,12 +143,18 @@ class ProductosSegundoMetodoController(APIView):
             }, status=status.HTTP_400_BAD_REQUEST)
         
 class UploadImageController(APIView):
-    # @swagger_auto_schema()
+    parser_classes = [MultiPartParser, FormParser]
+    
+    @swagger_auto_schema(request_body=UploadImageSerializer, operation_summary='Subir imagen')
     def post(self, request: Request | HttpRequest):
         try:
             image = request.FILES.get('imagen')
+            print(image)
+            return Response(data={
+                'content': 'Url de la imagen'
+            }, status=status.HTTP_201_CREATED)
         except Exception as err:
-                return Response(data={
-                    'message':'Error al crear el producto',
-                    'content': err.args
-                }, status=status.HTTP_400_BAD_REQUEST)
+            return Response(data={
+                'message':'Error al crear el producto',
+                'content': err.args
+            }, status=status.HTTP_400_BAD_REQUEST)
