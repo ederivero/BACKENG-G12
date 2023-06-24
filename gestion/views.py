@@ -81,3 +81,74 @@ class CategoriasController(APIView):
         return Response(data={
             'content': serializador.data
         })
+from rest_framework.parsers import MultiPartParser, FormParser
+
+# Se recomienda usar este método cuando los FILES son ligeros (1MB máximo)
+class ProductosController(APIView):
+    parser_classes = [MultiPartParser, FormParser]
+
+    @swagger_auto_schema(request_body=ProductoSerializer, operation_summary='Crear producto')
+    def post(self, request: Request | HttpRequest):
+        serializador = ProductoSerializer(data=request.data)
+        try:
+            serializador.is_valid(raise_exception=True)
+            serializador.save()
+            return Response(data={
+                'message': 'Producto creado exitosamente'
+            }, status=status.HTTP_201_CREATED)
+        except Exception as err:
+            return Response(data={
+                'message':'Error al crear el producto',
+                'content': err.args
+            }, status=status.HTTP_400_BAD_REQUEST)
+    
+    @swagger_auto_schema(responses={
+        status.HTTP_200_OK: openapi.Schema(
+            type= openapi.TYPE_OBJECT,
+            properties={
+                'content': openapi.Schema(
+                    type=openapi.TYPE_ARRAY, 
+                    items=openapi.Items(type=openapi.TYPE_OBJECT, properties={
+                        'id': openapi.Schema(type=openapi.TYPE_INTEGER, default=0),
+                        'nombre': openapi.Schema(type=openapi.TYPE_STRING),
+                        'fechaVencimiento': openapi.Schema(type=openapi.TYPE_STRING),
+                        'lote': openapi.Schema(type=openapi.TYPE_STRING),
+                        'precio': openapi.Schema(type=openapi.TYPE_NUMBER),
+                        'categoria': openapi.Schema(type=openapi.TYPE_INTEGER),
+                        'imagen': openapi.Schema(type=openapi.TYPE_STRING),})
+                )
+            }
+    )})
+    def get(self, request: Request | HttpRequest):
+        productos = Producto.objects.all()
+        serializer = ProductoSerializer(instance=productos, many=True)
+        return Response(data={
+            'content': serializer.data
+        }, status=status.HTTP_200_OK)
+
+class ProductosSegundoMetodoController(APIView):
+    @swagger_auto_schema(request_body=ProductoSegundoMetodoSerializer)
+    def post(self, request: Request | HttpRequest):
+        serializador = ProductoSegundoMetodoSerializer(data=request.data)
+        try:
+            serializador.is_valid(raise_exception=True)
+            serializador.save()
+            return Response(data={
+                'message': 'Producto creado exitosamente'
+            }, status=status.HTTP_201_CREATED)
+        except Exception as err:
+            return Response(data={
+                'message':'Error al crear el producto',
+                'content': err.args
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+class UploadImageController(APIView):
+    # @swagger_auto_schema()
+    def post(self, request: Request | HttpRequest):
+        try:
+            image = request.FILES.get('imagen')
+        except Exception as err:
+                return Response(data={
+                    'message':'Error al crear el producto',
+                    'content': err.args
+                }, status=status.HTTP_400_BAD_REQUEST)
