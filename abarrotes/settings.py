@@ -49,6 +49,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -178,3 +179,6 @@ config(
     api_secret=environ.get('CLOUDINARY_API_SECRET'),
     secure=True
 )
+
+# Es el lugar donde se almacenaran los archivos estaticos que utilizan Django, DRF, Swagger, entre otros
+STATIC_ROOT = BASE_DIR / 'archivos'
