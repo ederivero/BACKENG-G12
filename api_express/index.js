@@ -1,5 +1,8 @@
 import express from 'express';
 import Joi from 'joi';
+import swaggerUI from 'swagger-ui-express'
+// indicar el tipo de informacion que tendremos en nuestra importacion
+import swaggerDoc from './swagger.json' assert {type: 'json'}
 
 const servidor = express();
 const productos = [];
@@ -16,6 +19,8 @@ const productoValidator = Joi.object({
 servidor.use(express.json())
 // tipo form-urlencoded (application/form-url-encoded)
 // servidor.use(express.urlencoded())
+
+servidor.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerDoc))
 
 servidor.get('/inicio', (req, res) => {
     res.status(200).json({
@@ -100,7 +105,6 @@ servidor.route('/producto/:id').get((req, res) => {
             message: 'El producto no existe'
         })
     }
-
 
     // si existe cambiar su valor de la posicion a null
     productos[id] = null
