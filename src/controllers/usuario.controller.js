@@ -78,7 +78,11 @@ export const login = async (req, res) => {
 
 export const perfil = async (req, res) => {
     try {
-        const usuarioEncontrado = await conexion.usuario.findUniqueOrThrow({ where: { id: '...' } })
+        const usuarioEncontrado = await conexion.usuario.findUniqueOrThrow({
+            where: {
+                id: req.user.id
+            }
+        })
 
         return res.json({
             content: usuarioEncontrado

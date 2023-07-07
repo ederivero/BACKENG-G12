@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { conexion } from '../base_de_datos.js'
+import { conexion } from '../base_de_datos.js';
 
 export function validarData({ error, message, data }) {
     // Si hay un error, emitiremos un error para detener el proceso
@@ -15,7 +15,7 @@ export function validarData({ error, message, data }) {
 export async function validarToken(req, res, next) {
     // next > si todo esta bien le indicaremos que pase al siguiente middleware / controlador
 
-    if (!req.header.authorization) {
+    if (!req.headers.authorization) {
         // 403 > Forbidden
         return res.status(403).json({
             message: 'Se necesita un token para realizar esta peticion'
@@ -23,7 +23,7 @@ export async function validarToken(req, res, next) {
     }
 
     // Bearer xxxxx.xxxxx.xxxxx
-    const token = req.header.authorization.split(' ')[1]
+    const token = req.headers.authorization.split(' ')[1]
 
     if (!token) {
         return res.status(400).json({
