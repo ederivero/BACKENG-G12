@@ -8,3 +8,8 @@ export const registroUsuarioDto = Joi.object({
     password: Joi.string().required().regex(/^[a-zA-Z0-9!@#]{3,20}$/), // new RegExp('^[a-zA-Z0-9]{3,10}$')
     tipoUsuario: Joi.string().regex(new RegExp(`${TipoUsuario.ADMIN}|${TipoUsuario.CLIENTE}`)).required()
 })
+
+export const loginDto = Joi.object({
+    email: Joi.string().email().required(),
+    password: Joi.string().required()
+})

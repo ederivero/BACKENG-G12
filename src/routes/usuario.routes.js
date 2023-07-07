@@ -7,3 +7,4 @@ export const usuarioRouter = Router()
 
 // Creamos nuestra ruta del registro
 usuarioRouter.post('/registro', UsuarioController.registroUsuario)
+usuarioRouter.post('/login', UsuarioController.login)
