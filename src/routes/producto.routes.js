@@ -29,3 +29,5 @@ const middlewareMulter = multer({
 productoRouter.route('/productos').post(middlewareMulter.single('imagen'), ProductoController.crearProducto)
 
 productoRouter.get('/devolver-imagen/:nombre', ProductoController.devolverImagenLocal)
+
+productoRouter.get('/producto/:id', ProductoController.devolverProducto)
