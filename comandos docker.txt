@@ -7,3 +7,15 @@ docker tag prueba-node:latest prueba-node:v1.0.0 > agregamos una etiqueta en la 
 docker rmi prueba-node:latest > eliminamos la imagen 
 
 docker run --publish PUERTO_EXTERNO:PUERTO_INTERNO NOMBRE_IMAGEN > correr nuestra imagen exponiendo un puerto en particular
+si al run le ponemos --detach o -d hara que se ejecute en segundo plano
+
+docker ps > listara los contenedores > un conjunto de imagenes que se estan ejecutando o no
+
+docker restart ID | NAME > reiniciar un contenedor que no esta activo
+
+docker exec --interactive  --tty CONTAINER_ID COMAND > sirve para ejecutar un comando en nuestro contenedor , los comandos son comandos basados en linux
+
+NOTA: un contenedor puede tener mas de una imagen y es el encargado de ejecutar las imagenes
+
+
+docker-compose up > levantar nuestras imagenes declaradas en el docker-compose file
