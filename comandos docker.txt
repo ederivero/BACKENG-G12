@@ -1,0 +1,9 @@
+docker build --tag <NOMBRE_TAG> ubicacion > construira la imagen descargandose los recursos necesarios
+
+docker images > listara las imagenes que tenemos actualmente en nuestro docker
+
+docker tag prueba-node:latest prueba-node:v1.0.0 > agregamos una etiqueta en la ultima version y esto sirve para mantener un historial de imagenes en nuestro docker
+
+docker rmi prueba-node:latest > eliminamos la imagen 
+
+docker run --publish PUERTO_EXTERNO:PUERTO_INTERNO NOMBRE_IMAGEN > correr nuestra imagen exponiendo un puerto en particular
