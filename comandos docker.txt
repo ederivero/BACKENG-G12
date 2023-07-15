@@ -5,6 +5,7 @@ docker images > listara las imagenes que tenemos actualmente en nuestro docker
 docker tag prueba-node:latest prueba-node:v1.0.0 > agregamos una etiqueta en la ultima version y esto sirve para mantener un historial de imagenes en nuestro docker
 
 docker rmi prueba-node:latest > eliminamos la imagen 
+docker image rm prueba-node > es lo mismo que rmi
 
 docker run --publish PUERTO_EXTERNO:PUERTO_INTERNO NOMBRE_IMAGEN > correr nuestra imagen exponiendo un puerto en particular
 si al run le ponemos --detach o -d hara que se ejecute en segundo plano
@@ -14,6 +15,10 @@ docker ps > listara los contenedores > un conjunto de imagenes que se estan ejec
 docker restart ID | NAME > reiniciar un contenedor que no esta activo
 
 docker exec --interactive  --tty CONTAINER_ID COMAND > sirve para ejecutar un comando en nuestro contenedor , los comandos son comandos basados en linux
+
+docker stop ID_CONTENEDOR | NOMBRE_CONTENEDOR > parar la ejecucion de ese contenedor
+
+docker create --name NOMBRE_CONTENEDOR IMAGEN_BASE > crea un contenedor basandose en la imagen y adicional se le coloca el NOMBRE
 
 NOTA: un contenedor puede tener mas de una imagen y es el encargado de ejecutar las imagenes
 
