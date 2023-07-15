@@ -1,4 +1,5 @@
 `db` > muestra la base de datos que estamos utilizando
+`show dbs` > muestra el listado de bases de datos en nuestro servidor
 
 # Insertar un registro:
 
@@ -71,3 +72,11 @@ db.alumnos.find({nombre: 'Eduardo' })
 
    Resultado  
    `db.alumnos.find({ sexo: 'Femenino', $or: [{nombre:'Laura'}, {nombre:'Rosa'}] })`
+
+# Como actualizar registros
+
+`db.alumnos.updateOne({ nombre: 'Eduardo'} , { $set : { nombre:'Ramiro' } } )`
+
+# Como eliminar registros
+
+`db.alumnos.deleteOne({ nombre: 'Ramiro'})`
