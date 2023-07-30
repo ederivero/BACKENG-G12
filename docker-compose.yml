@@ -1,6 +1,14 @@
 # sirve para cuando queremos manejar varias imagenes 
 
 services:
+  mongodb:
+    image: mongo:latest
+    ports:
+      - 27018:27017
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=mongo
+      - MONGO_INITDB_ROOT_PASSWORD=password
+  
   db:
     image: postgres:15
     restart: always
@@ -24,4 +32,16 @@ services:
     depends_on:
       - db
 
+  expressmongo:
+    build: 
+      context: .
+      dockerfile: Dockerfile
     
+    environment:
+      - DATABASE_URL=mongodb://mongo:password@mongodb?authSource=admin
+      - PORT=8000
+    ports:
+      - 8000:8000
+    depends_on:
+      - mongodb
+      

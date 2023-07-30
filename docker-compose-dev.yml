@@ -1,0 +1,23 @@
+services:
+  mongodb:
+    image: mongo:latest
+    ports:
+      - 27018:27017
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=mongo
+      - MONGO_INITDB_ROOT_PASSWORD=password
+
+  expressmongo:
+    build: 
+      context: .
+      dockerfile: Dockerfile.dev
+    
+    environment:
+      - DATABASE_URL=mongodb://mongo:password@mongodb?authSource=admin
+    ports:
+      - 8001:8000
+    depends_on:
+      - mongodb
+      
+    volumes:
+      - .:/app
